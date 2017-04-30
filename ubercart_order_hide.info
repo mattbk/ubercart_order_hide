@@ -1,0 +1,6 @@
+name = Ubercart Order Hide
+description = Hide Ubercart order details from people who shouldn't see them  Custom module installed by MBK.
+package = Other
+core = 7.x
+
+files[] = ubercart_order_hide.module

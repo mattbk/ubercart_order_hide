@@ -1,0 +1,38 @@
+<?php
+/** Custom module from https://www.drupal.org/node/1851116#comment-6994474
+* Denies all roles but admin from viewing Ubercart order pages.
+* Using this because Path Access doesn't work.  https://www.drupal.org/node/1851116
+*
+*/
+
+/**
+ * Implements hook_init().
+ *
+ * This is a method to limit access to certain paths based on role.
+ * http://drupal.org/node/1851116#comment-6779762
+ */
+function ubercart_order_hide_init() {
+  // This array will be keyed by path and contain an array of allowed roles for that path
+  $restrictions = array(
+    'admin/store/orders/*' => array('administrator', 'editor'),
+  );
+  $path_alias = drupal_get_path_alias($_GET['q']);
+  global $user;
+  foreach ($restrictions as $path => $roles) {
+    // See if the current path matches any of the patterns provided.
+    if (drupal_match_path($path_alias, $path)) {
+      // It matches, check the current user has any of the required roles
+      $valid = FALSE;
+      foreach ($roles as $role) {
+        if (in_array($role, $user->roles)) {
+          $valid = TRUE;
+          break;
+        }
+      }
+      if (!$valid) {
+        drupal_goto('access-denied'); // Or whatever the URL is for your site's access denied/403 page.
+      }
+    }
+  }
+}
+?>
